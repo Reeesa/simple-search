@@ -55,5 +55,34 @@
          (map add-score
               (repeatedly max-tries #(random-answer instance)))))
 
-(time (random-search knapPI_16_20_1000_1 1000000
-))
+;(time (random-search knapPI_16_20_1000_1 1000000))
+
+;; Starts with a random answer, and then the value is penalized for being over-weight
+(defn hill-climber
+  [instance max-tries]
+  (let [current (random-answer instance)]
+        (punish current)
+        (repeat 5 (swap (rand-int (- (count :choices current) 1)) current))
+    ))
+
+ ;; penalize over-weight values
+ (defn punish
+   [answer]
+   (let [punishment (- (:capacity answer) (:total-weight answer))]
+      (if (< punishment 0)
+      (- (:total-value answer) punishment))))
+
+ (defn swap
+   [index answer]
+   (let [coin-toss (rand-int 2)]
+     (if (= coin-toss 0)
+       (remove (:choices answer) index))
+     ))
+
+ ;;; EXPERIMENTATION SECTION
+ ;(hill-climber knapPI_16_20_1000_1 3)
+ (def arr [{:num 0}, {:num 1},{:num 2}, {:num 3}, {:num 4} {:num 5}])
+ ;(remove {:num 0} arr)
+
+
+
