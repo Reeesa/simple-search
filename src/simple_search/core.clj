@@ -55,34 +55,65 @@
          (map add-score
               (repeatedly max-tries #(random-answer instance)))))
 
-;(time (random-search knapPI_16_20_1000_1 1000000))
+(time (random-search knapPI_16_20_1000_1 1000000))
 
 ;; Starts with a random answer, and then the value is penalized for being over-weight
 (defn hill-climber
   [instance max-tries]
-  (let [current (random-answer instance)]
-        (punish current)
-        (repeat 5 (swap (rand-int (- (count :choices current) 1)) current))
-    ))
+  (let [current (random-answer instance) score (:total-value current)]
+       ;(assoc (vec :current :total-value) (punish current))
+        (apply max-key :score
+          (assoc current :score (punish current)))
+            ;(repeat 5 (swap (rand-int (- (count :choices current) 1)) current))
+            (let [climb (repeat 5 (swap (rand-int (- (count :choices current) 1)) current))]
+            (if (< (:score current) (:score climb))
+              (let [current climb]))
+    )))
 
  ;; penalize over-weight values
  (defn punish
    [answer]
-   (let [punishment (- (:capacity answer) (:total-weight answer))]
+   (let [punishment (- (:capacity (:instance answer)) (:total-weight answer))]
       (if (< punishment 0)
-      (- (:total-value answer) punishment))))
+        (+ (:total-value answer) punishment))
+         (:total-value answer)))
 
  (defn swap
    [index answer]
-   (let [coin-toss (rand-int 2)]
+  (let [coin-toss (rand-int 2) die-toss (rand-int 9)]
+    (if (= (nth (:choices answer) index) 1
      (if (= coin-toss 0)
-       (remove (:choices answer) index))
-     ))
+       ;(remove (:choices answer) index))
+       (assoc (vec :choices answer)index 0)
+           (update-in answer [:total-weight answer] - (nth (:weight (:items (:instance answer)) index)))
+           (update-in answer [:total-value answer] - (nth (:value (:items (:instance answer)) index)))
+           (assoc (:score answer) (punish(answer))))
+       (assoc (vec :choices answer)index 1)))
+     (if (= die-toss 0)
+       (assoc (vec :choices answer)index 1)
+         (update-in answer [:total-weight answer] + (nth (:weight (:items (:instance answer)) index)))
+         (update-in answer [:total-value answer] + (nth (:value (:items (:instance answer)) index)))
+          (assoc (:score answer) (punish(answer))))
+
+
+       (assoc (vec :choices answer)index 0)))
+
+
+
+
+ ;;; Calling the function
+ (hill-climber knapPI_16_20_1000_1 10)
+ ;(punish (random-answer knapPI_16_20_1000_1))
 
  ;;; EXPERIMENTATION SECTION
  ;(hill-climber knapPI_16_20_1000_1 3)
- (def arr [{:num 0}, {:num 1},{:num 2}, {:num 3}, {:num 4} {:num 5}])
- ;(remove {:num 0} arr)
+ ; (def arr [{:num 0}, {:num 1},{:num 2}, {:num 3}, {:num 4} {:num 5}])
+ ; (remove even? arr)
+ ; (defn
+ ;   [list index]
+ ;   (filter (not index)))
+ ;(remove (subseq {:num 1}) arr)
+
 
 
 
