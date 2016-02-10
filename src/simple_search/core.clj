@@ -71,7 +71,7 @@
 
 
 
-;; flip-choices: takes a list of choices and randomly changes five of them
+;; flip-choices: takes a list of choices and randomly changes x specified ammount of them
 (defn flip-choices
   [binary times]
   (if (= times 0) (into () binary)
@@ -102,7 +102,7 @@
   [instance mutator max-tries init-tries]
   (if (= max-tries 0) instance
   (let [current (add-score (if (= init-tries max-tries) (random-answer instance) instance))
-        child (assoc current :choices (mutator (:choices current) (rand-int 6)))
+        child (assoc current :choices (mutator (:choices current) (+ (rand-int 5) 1)))
         updated-child (add-score (update-totals (:instance child) (:choices child)))
         best (get-best current updated-child)
         ]
@@ -111,4 +111,8 @@
   )
 )
 
-(hill-climber knapPI_11_20_1000_3 flip-choices 1000 1000)
+
+(hill-climber knapPI_11_20_1000_1 flip-choices 10000 10000)
+(hill-climber knapPI_13_20_1000_1 flip-choices 10000 10000)
+(hill-climber knapPI_16_20_1000_1 flip-choices 10000 10000)
+
