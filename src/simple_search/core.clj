@@ -19,17 +19,25 @@
        (filter #(= 1 (second %))
                (map vector items choices))))
 
+;; update-choices: takes an instance and choices,
+;; returns a list where in the instance the choices match to '1'
+;; calculates total weight & value
+(defn update-totals
+  [instance choices]
+  (let [included (included-items (:items instance) choices)]
+    {:instance instance
+     :choices choices
+     :total-weight (reduce + (map :weight included))
+     :total-value (reduce + (map :value included))})
+  )
+
 (defn random-answer
   "Construct a random answer for the given instance of the
   knapsack problem."
   [instance]
   (let [choices (repeatedly (count (:items instance))
-                            #(rand-int 2))
-        included (included-items (:items instance) choices)]
-    {:instance instance
-     :choices choices
-     :total-weight (reduce + (map :weight included))
-     :total-value (reduce + (map :value included))}))
+                            #(rand-int 2))]
+    update-totals(instance choices)))
 
 ;;; It might be cool to write a function that
 ;;; generates weighted proportions of 0's and 1's.
@@ -40,7 +48,8 @@
   [answer]
   (if (> (:total-weight answer)
          (:capacity (:instance answer)))
-    0
+
+    (- (:capacity (:instance answer)) (:total-weight answer))
     (:total-value answer)))
 
 (defn add-score
@@ -57,63 +66,49 @@
 
 (time (random-search knapPI_16_20_1000_1 1000000))
 
-;; Starts with a random answer, and then the value is penalized for being over-weight
+
+
+
+
+
+;; flip-choices: takes a list of choices and randomly changes five of them
+(defn flip-choices
+  [binary times]
+  (if (= times 0) (into () binary)
+  (let [size (count binary)
+        binary (vec binary)]
+        (flip-choices (assoc (vec binary) (rand-int size) (rand-int 2)) (dec times))
+    )
+ ))
+
+
+;; best: takes a parent and a child and returns the best of the two
+(defn get-best
+  [parent child]
+  (let [parent-score (:score parent)
+        child-score (:score child)]
+  (if (< parent-score child-score) child
+       parent)
+    )
+)
+
+;; hill-climber: takes an instance, a mutating function, and numbers of tries you want the mutation
+;; to be attempted (done recursively)
+;; init-max: initial value of max
+;; current: initial randomly generated answer
+;; child: child of current with difference choices (only difference between this and parent is choices list)
+;; updated-child: proper-child (total values are actually calculated)
 (defn hill-climber
-  [instance max-tries]
-  (let [current (random-answer instance) score (:total-value current)]
-       ;(assoc (vec :current :total-value) (punish current))
-        (apply max-key :score
-          (assoc current :score (punish current)))
-            ;(repeat 5 (swap (rand-int (- (count :choices current) 1)) current))
-            (let [climb (repeat 5 (swap (rand-int (- (count :choices current) 1)) current))]
-            (if (< (:score current) (:score climb))
-              (let [current climb]))
-    )))
+  [instance mutator max-tries init-tries]
+  (if (= max-tries 0) instance
+  (let [current (add-score (if (= init-tries max-tries) (random-answer instance) instance))
+        child (assoc current :choices (mutator (:choices current) (rand-int 6)))
+        updated-child (add-score (update-totals (:instance child) (:choices child)))
+        best (get-best current updated-child)
+        ]
+        (hill-climber best mutator (dec max-tries) init-tries)
+  )
+  )
+)
 
- ;; penalize over-weight values
- (defn punish
-   [answer]
-   (let [punishment (- (:capacity (:instance answer)) (:total-weight answer))]
-      (if (< punishment 0)
-        (+ (:total-value answer) punishment))
-         (:total-value answer)))
-
- (defn swap
-   [index answer]
-  (let [coin-toss (rand-int 2) die-toss (rand-int 9)]
-    (if (= (nth (:choices answer) index) 1
-     (if (= coin-toss 0)
-       ;(remove (:choices answer) index))
-       (assoc (vec :choices answer)index 0)
-           (update-in answer [:total-weight answer] - (nth (:weight (:items (:instance answer)) index)))
-           (update-in answer [:total-value answer] - (nth (:value (:items (:instance answer)) index)))
-           (assoc (:score answer) (punish(answer))))
-       (assoc (vec :choices answer)index 1)))
-     (if (= die-toss 0)
-       (assoc (vec :choices answer)index 1)
-         (update-in answer [:total-weight answer] + (nth (:weight (:items (:instance answer)) index)))
-         (update-in answer [:total-value answer] + (nth (:value (:items (:instance answer)) index)))
-          (assoc (:score answer) (punish(answer))))
-
-
-       (assoc (vec :choices answer)index 0)))
-
-
-
-
- ;;; Calling the function
- (hill-climber knapPI_16_20_1000_1 10)
- ;(punish (random-answer knapPI_16_20_1000_1))
-
- ;;; EXPERIMENTATION SECTION
- ;(hill-climber knapPI_16_20_1000_1 3)
- ; (def arr [{:num 0}, {:num 1},{:num 2}, {:num 3}, {:num 4} {:num 5}])
- ; (remove even? arr)
- ; (defn
- ;   [list index]
- ;   (filter (not index)))
- ;(remove (subseq {:num 1}) arr)
-
-
-
-
+(hill-climber knapPI_11_20_1000_3 flip-choices 1000 1000)
