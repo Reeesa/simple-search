@@ -37,7 +37,7 @@
   [instance]
   (let [choices (repeatedly (count (:items instance))
                             #(rand-int 2))]
-    update-totals(instance choices)))
+    (update-totals instance choices)))
 
 ;;; It might be cool to write a function that
 ;;; generates weighted proportions of 0's and 1's.
@@ -112,7 +112,7 @@
 )
 
 
-(hill-climber knapPI_11_20_1000_1 flip-choices 10000 10000)
-(hill-climber knapPI_13_20_1000_1 flip-choices 10000 10000)
-(hill-climber knapPI_16_20_1000_1 flip-choices 10000 10000)
+(hill-climber knapPI_11_20_1000_1 flip-choices 1000 1000)
+(hill-climber knapPI_13_20_1000_1 flip-choices 1000 1000)
+(hill-climber knapPI_16_20_1000_1 flip-choices 1000 1000)
 
