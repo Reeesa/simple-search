@@ -1,7 +1,10 @@
 (ns simple-search.core
   (:use simple-search.knapsack-examples.knapPI_11_20_1000
         simple-search.knapsack-examples.knapPI_13_20_1000
-        simple-search.knapsack-examples.knapPI_16_20_1000))
+        simple-search.knapsack-examples.knapPI_16_20_1000
+        simple-search.knapsack-examples.knapPI_11_1000_1000
+        simple-search.knapsack-examples.knapPI_13_1000_1000
+        simple-search.knapsack-examples.knapPI_16_1000_1000))
 
 ;;; An answer will be a map with (at least) four entries:
 ;;;   * :instance
@@ -110,7 +113,61 @@
 )
 ;(Math/ceil ( * (count ((random-answer knapPI_13_20_1000_4) :choices)) 0.25))
 
-;(hill-climber knapPI_11_20_1000_1 flip-choices 10000)
-;(hill-climber knapPI_13_20_1000_1 flip-choices 1000)
-;(hill-climber knapPI_16_20_1000_1 flip-choices 1000)
+
+;random-restart: takes an instance, mutator, max-tries, num-restarts
+;returns the best answers generated from the restarts
+;https://clojuredocs.org/clojure.core/repeatedly
+(defn random-restart
+  [instance mutator max-tries num-restarts]
+  (reduce max-key :score
+          (take num-restarts
+                (repeatedly #(hill-climber instance mutator max-tries)))))
+
+;get-scores: takes answer and returns the capacity, total-weight, total-value, and score fields
+(defn get-scores
+  [answer]
+  (let [capacity (:capacity (:instance answer))]
+  (merge {:capacity capacity} (select-keys answer [:total-weight :total-value :score]))))
+
+;############### 20 items ###########################
+;; Regular hill-climber
+(hill-climber knapPI_11_20_1000_1 flip-choices 10000)
+(hill-climber knapPI_13_20_1000_1 flip-choices 10000)
+(hill-climber knapPI_16_20_1000_1 flip-choices 10000)
+
+;; Regular hill-climber, view just scores
+(get-scores (hill-climber knapPI_11_20_1000_1 flip-choices 10000))
+(get-scores (hill-climber knapPI_13_20_1000_1 flip-choices 10000))
+(get-scores (hill-climber knapPI_16_20_1000_1 flip-choices 10000))
+
+;; Random-Restart hill-climber
+(random-restart knapPI_11_20_1000_1 flip-choices 10000 10)
+(random-restart knapPI_13_20_1000_1 flip-choices 10000 10)
+(random-restart knapPI_16_20_1000_1 flip-choices 10000 10)
+
+;; Random-Restart, view just scores
+(get-scores (random-restart knapPI_11_20_1000_1 flip-choices 10000 10))
+(get-scores (random-restart knapPI_13_20_1000_1 flip-choices 10000 10))
+(get-scores (random-restart knapPI_16_20_1000_1 flip-choices 10000 10))
+
+;############### 1000 items ###########################
+;; Regular hill-climber
+(hill-climber knapPI_11_1000_1000_1 flip-choices 10000)
+(hill-climber knapPI_13_1000_1000_1 flip-choices 10000)
+(hill-climber knapPI_16_1000_1000_1 flip-choices 10000)
+
+;; Regular hill-climber, view just scores
+(get-scores (hill-climber knapPI_11_1000_1000_1 flip-choices 10000))
+(get-scores (hill-climber knapPI_13_1000_1000_1 flip-choices 10000))
+(get-scores (hill-climber knapPI_16_1000_1000_1 flip-choices 10000))
+
+;; Random-Restart hill-climber
+(random-restart knapPI_11_20_1000_1 flip-choices 10000 10)
+(random-restart knapPI_13_20_1000_1 flip-choices 10000 10)
+(random-restart knapPI_16_20_1000_1 flip-choices 10000 10)
+
+;; Random-Restart, view just scores
+(get-scores (random-restart knapPI_11_1000_1000_1 flip-choices 10000 10))
+(get-scores (random-restart knapPI_13_1000_1000_1 flip-choices 10000 10))
+(get-scores (random-restart knapPI_16_1000_1000_1 flip-choices 10000 10))
 
