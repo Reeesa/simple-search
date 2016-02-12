@@ -64,7 +64,7 @@
          (map add-score
               (repeatedly max-tries #(random-answer instance)))))
 
-;(time (random-search knapPI_16_20_1000_1 1000000))
+;(time (random-search knapPI_16_20_1000_1 100000))
 
 
 "___________________________________________###############_______________________________________"
@@ -91,25 +91,25 @@
 
 ;; hill-climber: takes an instance, a mutating function, and numbers of tries you want the mutation
 ;; to be attempted (done recursively)
-;; init-max: initial value of max
 ;; current: initial randomly generated answer
 ;; child: child of current with difference choices (only difference between this and parent is choices list)
 ;; updated-child: proper-child (total values are actually calculated)
 (defn hill-climber
-  [instance mutator max-tries init-tries]
-  (if (= max-tries 0) instance
-  (let [current (add-score (if (= init-tries max-tries) (random-answer instance) instance))
-        child (assoc current :choices (mutator (:choices current) (+ (rand-int 5) 1)))
-        updated-child (add-score (update-totals (:instance child) (:choices child)))
-        best (get-best current updated-child)
-        ]
-        (hill-climber best mutator (dec max-tries) init-tries)
-  )
-  )
+  [instance mutator max-tries]
+  (loop [inst instance
+         mut mutator
+         x max-tries]
+    (let [current (add-score (if (= x max-tries) (random-answer inst) inst))
+          child (assoc current :choices (mut (:choices current) (+ (rand-int 5) 1)))
+          updated-child (add-score (update-totals (:instance child) (:choices child)))
+          best (get-best current updated-child)
+         ]
+    (if (zero? x) inst
+    (recur best mut (dec x)))))
 )
 
 
-;(hill-climber knapPI_11_20_1000_1 flip-choices 1000 1000)
-;(hill-climber knapPI_13_20_1000_1 flip-choices 1000 1000)
-;(hill-climber knapPI_16_20_1000_1 flip-choices 1000 1000)
+;(hill-climber knapPI_11_20_1000_1 flip-choices 10000)
+;(hill-climber knapPI_13_20_1000_1 flip-choices 1000)
+;(hill-climber knapPI_16_20_1000_1 flip-choices 1000)
 
