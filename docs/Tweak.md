@@ -18,7 +18,7 @@ we round it up in order to get a whole number.
 
 Takes the hill-climber function and the number of restarts you want it to have. 
 Performance difference between this the the regular hill-climber is most notable with 
-the large item sets.
+the large item sets...in a negative way.
 
 ## Results: Small Item-set (20)
 
