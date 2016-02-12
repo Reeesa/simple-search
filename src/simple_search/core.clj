@@ -100,14 +100,15 @@
          mut mutator
          x max-tries]
     (let [current (add-score (if (= x max-tries) (random-answer inst) inst))
-          child (assoc current :choices (mut (:choices current) (+ (rand-int 5) 1)))
+          mut-count (Math/ceil (* (count (current :choices)) 0.25))
+          child (assoc current :choices (mut (:choices current) (+ (rand-int mut-count) 1)))
           updated-child (add-score (update-totals (:instance child) (:choices child)))
           best (get-best current updated-child)
          ]
     (if (zero? x) inst
     (recur best mut (dec x)))))
 )
-
+;(Math/ceil ( * (count ((random-answer knapPI_13_20_1000_4) :choices)) 0.25))
 
 ;(hill-climber knapPI_11_20_1000_1 flip-choices 10000)
 ;(hill-climber knapPI_13_20_1000_1 flip-choices 1000)
