@@ -64,22 +64,19 @@
          (map add-score
               (repeatedly max-tries #(random-answer instance)))))
 
-(time (random-search knapPI_16_20_1000_1 1000000))
+;(time (random-search knapPI_16_20_1000_1 1000000))
 
 
-
-
-
+"___________________________________________###############_______________________________________"
+"########################################### OUR FUNCTIONS #######################################"
+"*******************************************###############***************************************"
 
 ;; flip-choices: takes a list of choices and randomly changes x specified ammount of them
-(defn flip-choices
-  [binary times]
-  (if (= times 0) (into () binary)
-  (let [size (count binary)
-        binary (vec binary)]
-        (flip-choices (assoc (vec binary) (rand-int size) (rand-int 2)) (dec times))
-    )
- ))
+(defn flip-choices [binary times]
+    (loop [bin binary x times]
+      (if (zero? x) (into () bin)
+        (recur (assoc (vec bin) (rand-int (count bin)) (rand-int 2)) (dec x))))
+)
 
 
 ;; best: takes a parent and a child and returns the best of the two
@@ -112,7 +109,7 @@
 )
 
 
-(hill-climber knapPI_11_20_1000_1 flip-choices 1000 1000)
-(hill-climber knapPI_13_20_1000_1 flip-choices 1000 1000)
-(hill-climber knapPI_16_20_1000_1 flip-choices 1000 1000)
+;(hill-climber knapPI_11_20_1000_1 flip-choices 1000 1000)
+;(hill-climber knapPI_13_20_1000_1 flip-choices 1000 1000)
+;(hill-climber knapPI_16_20_1000_1 flip-choices 1000 1000)
 
