@@ -2,6 +2,9 @@
   (:use simple-search.knapsack-examples.knapPI_11_20_1000
         simple-search.knapsack-examples.knapPI_13_20_1000
         simple-search.knapsack-examples.knapPI_16_20_1000
+        simple-search.knapsack-examples.knapPI_11_200_1000
+        simple-search.knapsack-examples.knapPI_13_200_1000
+        simple-search.knapsack-examples.knapPI_16_200_1000
         simple-search.knapsack-examples.knapPI_11_1000_1000
         simple-search.knapsack-examples.knapPI_13_1000_1000
         simple-search.knapsack-examples.knapPI_16_1000_1000))
@@ -89,8 +92,7 @@
         child-score (:score child)]
   (if (< parent-score child-score) child
        parent)
-    )
-)
+))
 
 ;; hill-climber: takes an instance, a mutating function, and numbers of tries you want the mutation
 ;; to be attempted (done recursively)
@@ -131,43 +133,65 @@
 
 ;############### 20 items ###########################
 ;; Regular hill-climber
-(hill-climber knapPI_11_20_1000_1 flip-choices 10000)
-(hill-climber knapPI_13_20_1000_1 flip-choices 10000)
-(hill-climber knapPI_16_20_1000_1 flip-choices 10000)
+;; (hill-climber knapPI_11_20_1000_1 flip-choices 10000)
+;; (hill-climber knapPI_13_20_1000_1 flip-choices 10000)
+;; (hill-climber knapPI_16_20_1000_1 flip-choices 10000)
 
-;; Regular hill-climber, view just scores
-(get-scores (hill-climber knapPI_11_20_1000_1 flip-choices 10000))
-(get-scores (hill-climber knapPI_13_20_1000_1 flip-choices 10000))
-(get-scores (hill-climber knapPI_16_20_1000_1 flip-choices 10000))
+;; ;; Regular hill-climber, view just scores
+(hill-climber knapPI_11_20_1000_4 flip-choices 100)
+(get-scores (hill-climber knapPI_13_20_1000_1 flip-choices 100000))
+(get-scores (hill-climber knapPI_16_20_1000_1 flip-choices 100000))
 
-;; Random-Restart hill-climber
-(random-restart knapPI_11_20_1000_1 flip-choices 10000 10)
-(random-restart knapPI_13_20_1000_1 flip-choices 10000 10)
-(random-restart knapPI_16_20_1000_1 flip-choices 10000 10)
+;; ;; Random-Restart hill-climber
+(random-restart knapPI_11_20_1000_4 flip-choices 100 10)
+(get-scores (random-restart knapPI_13_20_1000_1 flip-choices 100000 10))
+(get-scores (random-restart knapPI_16_20_1000_1 flip-choices 100000 10))
 
-;; Random-Restart, view just scores
-(get-scores (random-restart knapPI_11_20_1000_1 flip-choices 10000 10))
-(get-scores (random-restart knapPI_13_20_1000_1 flip-choices 10000 10))
-(get-scores (random-restart knapPI_16_20_1000_1 flip-choices 10000 10))
+;; ;; Random-Search
+(get-scores (random-search knapPI_11_20_1000_1 100000))
+(get-scores (random-search knapPI_13_20_1000_1 100000))
+(get-scores (random-search knapPI_16_20_1000_1 100000))
 
-;############### 1000 items ###########################
-;; Regular hill-climber
-(hill-climber knapPI_11_1000_1000_1 flip-choices 10000)
-(hill-climber knapPI_13_1000_1000_1 flip-choices 10000)
-(hill-climber knapPI_16_1000_1000_1 flip-choices 10000)
 
-;; Regular hill-climber, view just scores
-(get-scores (hill-climber knapPI_11_1000_1000_1 flip-choices 10000))
-(get-scores (hill-climber knapPI_13_1000_1000_1 flip-choices 10000))
-(get-scores (hill-climber knapPI_16_1000_1000_1 flip-choices 10000))
+;; ;############### 200 items ###########################
+;; ;; Regular hill-climber
+;; (hill-climber knapPI_11_200_1000_1 flip-choices 10000)
+;; (hill-climber knapPI_13_200_1000_1 flip-choices 10000)
+;; (hill-climber knapPI_16_200_1000_1 flip-choices 10000)
 
-;; Random-Restart hill-climber
-(random-restart knapPI_11_20_1000_1 flip-choices 10000 10)
-(random-restart knapPI_13_20_1000_1 flip-choices 10000 10)
-(random-restart knapPI_16_20_1000_1 flip-choices 10000 10)
+;; ;; Regular hill-climber, view just scores
+;; (time (get-scores (hill-climber knapPI_11_200_1000_1 flip-choices 1000000)))
+;; (time (get-scores (hill-climber knapPI_13_200_1000_1 flip-choices 1000000)))
+;; (time (get-scores (hill-climber knapPI_16_200_1000_1 flip-choices 1000000)))
 
-;; Random-Restart, view just scores
-(get-scores (random-restart knapPI_11_1000_1000_1 flip-choices 10000 10))
-(get-scores (random-restart knapPI_13_1000_1000_1 flip-choices 10000 10))
-(get-scores (random-restart knapPI_16_1000_1000_1 flip-choices 10000 10))
+;; ;; Random-Restart hill-climber
+;; (random-restart knapPI_11_200_1000_1 flip-choices 10000 10)
+;; (random-restart knapPI_13_200_1000_1 flip-choices 10000 10)
+;; (random-restart knapPI_16_200_1000_1 flip-choices 10000 10)
+
+;; ;; Random-Restart, view just scores
+;; (get-scores (random-restart knapPI_11_200_1000_1 flip-choices 10000 10))
+;; (get-scores (random-restart knapPI_13_200_1000_1 flip-choices 10000 10))
+;; (get-scores (random-restart knapPI_16_200_1000_1 flip-choices 10000 10))
+
+;; ;############### 1000 items ###########################
+;; ;; Regular hill-climber
+;; (hill-climber knapPI_11_1000_1000_1 flip-choices 10000)
+;; (hill-climber knapPI_13_1000_1000_1 flip-choices 10000)
+;; (hill-climber knapPI_16_1000_1000_1 flip-choices 10000)
+
+;; ;; Regular hill-climber, view just scores
+;; (time (get-scores (hill-climber knapPI_11_1000_1000_1 flip-choices 1000000)))
+;; (time (get-scores (hill-climber knapPI_13_1000_1000_1 flip-choices 10000)))
+;; (time (get-scores (hill-climber knapPI_16_1000_1000_1 flip-choices 10000)))
+
+;; ;; Random-Restart hill-climber
+;; (random-restart knapPI_11_20_1000_1 flip-choices 10000 10)
+;; (random-restart knapPI_13_20_1000_1 flip-choices 10000 10)
+;; (random-restart knapPI_16_20_1000_1 flip-choices 10000 10)
+
+;; ;; Random-Restart, view just scores
+;; (get-scores (random-restart knapPI_11_1000_1000_1 flip-choices 10000 10))
+;; (get-scores (random-restart knapPI_13_1000_1000_1 flip-choices 10000 10))
+;; (get-scores (random-restart knapPI_16_1000_1000_1 flip-choices 10000 10))
 
